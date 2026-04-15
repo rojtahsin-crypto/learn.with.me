@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Language Master | Learn Dutch, French & English</title>
+    <meta name="description" content="Master Dutch, French and English grammar with interactive lessons, practice exercises and tests. Free language learning tool.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+/* ===== RESET & BASE ===== */
+*{margin:0;padding:0;box-sizing:border-box}
+*,*::before,*::after{transition:background-color .25s,color .25s,border-color .25s,box-shadow .25s,transform .15s}
+:root{
+  --bg:#f4f1ec;--card:#fffffe;--text:#1a1a2e;--text2:#4a4a6a;--text3:#8888a0;
+  --border:#e0dcd4;--accent:#e85d04;--accent2:#f48c06;--accent-soft:rgba(232,93,4,.08);
+  --green:#16a34a;--red:#dc2626;--yellow:#f59e0b;
+  --shadow:0 8px 30px -12px rgba(0,0,0,.12);
+  --shadow-lg:0 20px 50px -15px rgba(0,0,0,.15);
+  --radius:1.5rem;
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+body.dark{
+  --bg:#0d0d1a;--card:#161625;--text:#e8e8f0;--text2:#a0a0c0;--text3:#606080;
+  --border:#2a2a40;--accent:#f48c06;--accent2:#fbbf24;--accent-soft:rgba(244,140,6,.1);
+  --shadow:0 8px 30px -12px rgba(0,0,0,.4);
+  --shadow-lg:0 20px 50px -15px rgba(0,0,0,.5);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+
+/* ===== CONTAINER ===== */
+.container{max-width:960px;margin:0 auto;padding:1.5rem;width:100%;flex:1}
+
+/* ===== FLAG SCREEN ===== */
+.flag-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:2rem}
+.flag-content{text-align:center;max-width:600px;width:100%}
+.flag-title{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;margin-bottom:.5rem;color:var(--text)}
+.flag-subtitle{color:var(--text3);font-size:1rem;margin-bottom:2.5rem;font-weight:400}
+.flags-row{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap}
+.flag-card{cursor:pointer;background:var(--card);padding:1.5rem 2rem;border-radius:var(--radius);text-align:center;border:2px solid var(--border);box-shadow:var(--shadow);min-width:150px;flex:1;max-width:180px}
+.flag-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--accent)}
+.flag-card img{width:64px;height:auto;border-radius:8px;margin-bottom:.8rem;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.flag-card span{display:block;font-weight:600;font-size:1rem;color:var(--text)}
+
+/* ===== TOP BAR ===== */
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:.8rem}
+.tab-nav{display:flex;gap:4px;background:var(--card);padding:4px;border-radius:60px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.tab-btn{background:transparent;border:none;padding:.55rem 1.3rem;border-radius:60px;font-weight:600;font-size:.88rem;cursor:pointer;color:var(--text3);display:flex;align-items:center;gap:6px}
+.tab-btn i{font-size:.95rem}
+.tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 12px rgba(232,93,4,.3)}
+.top-bar-actions{display:flex;gap:.4rem}
+.theme-toggle,.lang-reset-btn{background:var(--card);border:1px solid var(--border);font-size:1.1rem;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.theme-toggle:hover,.lang-reset-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ===== SEARCH ===== */
+.search-section{margin-bottom:1.5rem;position:relative}
+.search-wrapper{background:var(--card);border-radius:60px;padding:2px 2px 2px 1.2rem;display:flex;align-items:center;border:1.5px solid var(--border);box-shadow:0 4px 15px rgba(0,0,0,.04)}
+.search-wrapper:focus-within{border-color:var(--accent);box-shadow:0 4px 20px rgba(232,93,4,.1)}
+.search-wrapper i.fa-search{color:var(--text3);font-size:1rem}
+#searchInput{flex:1;border:none;padding:.85rem .8rem;font-size:.95rem;background:transparent;outline:none;color:var(--text);font-weight:400}
+#searchInput::placeholder{color:var(--text3)}
+#searchClearBtn{background:transparent;border:none;color:var(--text3);cursor:pointer;padding:.5rem .8rem;font-size:1rem;border-radius:40px}
+#searchClearBtn:hover{color:var(--red)}
+.search-results-panel{position:absolute;top:58px;left:0;right:0;background:var(--card);border-radius:1.2rem;box-shadow:var(--shadow-lg);z-index:999;max-height:380px;overflow-y:auto;border:1px solid var(--border);display:none;padding:.6rem 0}
+.search-result-category{padding:.4rem 1.2rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)}
+.search-result-item{padding:.7rem 1.2rem;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.search-result-item:last-child{border-bottom:none}
+.search-result-item:hover{background:var(--accent-soft)}
+.search-result-icon{width:30px;height:30px;background:var(--accent-soft);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:.8rem;flex-shrink:0}
+.search-result-title{font-weight:600;font-size:.9rem}
+.search-result-sub{font-size:.75rem;color:var(--text3)}
+.highlight{background:rgba(245,158,11,.25);padding:0 2px;border-radius:4px;font-weight:600}
+.no-results{padding:1.5rem;text-align:center;color:var(--text3);font-size:.9rem}
+
+/* ===== SECTIONS ===== */
+.section-card{background:var(--card);border-radius:var(--radius);padding:1.8rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow);border:1px solid var(--border);display:none}
+.section-card.active-section{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem;color:var(--text)}
+.section-title i{color:var(--accent)}
+
+/* ===== GRAMMAR ===== */
+.grammar-scroll{max-height:600px;overflow-y:auto;padding-right:4px;scroll-behavior:smooth}
+.grammar-card{background:var(--bg);border-radius:1.2rem;padding:1.3rem 1.5rem;margin-bottom:1rem;border-left:5px solid var(--accent);cursor:default;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.grammar-card.highlight-card{box-shadow:0 0 0 3px var(--yellow),var(--shadow);transform:scale(1.005)}
+.grammar-card h3{font-size:1.05rem;font-weight:700;margin-bottom:.5rem;color:var(--text);display:flex;align-items:center;gap:.5rem}
+.grammar-card h3 i{color:var(--accent);font-size:.85rem}
+.grammar-card p{font-size:.88rem;color:var(--text2);line-height:1.7;white-space:pre-line}
+.example-words{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+.dict-word{background:var(--card);padding:.35rem .9rem;border-radius:40px;font-size:.82rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);color:var(--text)}
+.dict-word:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.dict-word i{font-size:.7rem;color:var(--accent)}
+.swipe-hint{text-align:center;padding:.8rem;font-size:.75rem;color:var(--text3)}
+
+/* ===== LEVEL BUTTONS ===== */
+.level-buttons{display:flex;gap:.6rem;margin:1rem 0;flex-wrap:wrap}
+.level-btn{background:var(--bg);border:1.5px solid var(--border);padding:.5rem 1.5rem;border-radius:60px;font-weight:600;cursor:pointer;font-size:.88rem;color:var(--text2)}
+.level-btn:hover{border-color:var(--accent)}
+.level-btn.active-level{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ===== QUIZ ===== */
+.quiz-question{font-size:1.1rem;font-weight:600;margin:1rem 0;background:var(--bg);padding:1.1rem 1.3rem;border-radius:1.2rem;color:var(--text);border:1px solid var(--border)}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:1rem 0}
+.quiz-option{background:var(--bg);padding:.8rem 1.3rem;border-radius:60px;cursor:pointer;font-weight:500;font-size:.92rem;border:1.5px solid var(--border);color:var(--text)}
+.quiz-option:hover{border-color:var(--accent);background:var(--accent-soft)}
+.quiz-option.correct-feedback{background:var(--green)!important;color:#fff!important;border-color:var(--green)!important}
+.quiz-option.wrong-feedback{background:var(--red)!important;color:#fff!important;border-color:var(--red)!important}
+.next-btn,.submit-test{background:var(--accent);color:#fff;border:none;padding:.8rem 2rem;border-radius:60px;font-weight:700;margin-top:1rem;cursor:pointer;font-size:.9rem}
+.next-btn:hover,.submit-test:hover{background:var(--accent2);transform:translateY(-1px)}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar-container{background:var(--border);border-radius:20px;height:10px;margin:1rem 0 .3rem;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--green),#22d3ee);height:100%;width:0%;border-radius:20px;transition:width .4s ease}
+
+/* ===== TEST ===== */
+.test-question-item{background:var(--bg);padding:1.3rem;border-radius:1.2rem;margin-bottom:1rem;border:1px solid var(--border)}
+.test-question-item p{font-weight:600;margin-bottom:.6rem;font-size:.95rem}
+.test-input{width:100%;padding:.75rem 1rem;border-radius:60px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:.9rem;outline:none}
+.test-input:focus{border-color:var(--accent)}
+.test-radio-group{display:flex;flex-direction:column;gap:.4rem;margin-top:.5rem}
+.test-radio-group label{display:flex;align-items:center;gap:.5rem;padding:.5rem .8rem;border-radius:60px;cursor:pointer;font-size:.9rem;border:1.5px solid var(--border);background:var(--card)}
+.test-radio-group label:hover{border-color:var(--accent)}
+.test-radio-group input[type="radio"]{accent-color:var(--accent)}
+
+/* ===== POPUP ===== */
+.dict-popup{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:12px 24px;border-radius:60px;z-index:1200;box-shadow:var(--shadow-lg);animation:popUp .25s ease;font-weight:500;font-size:.9rem;display:flex;align-items:center;gap:8px}
+.dict-popup i{cursor:pointer;color:var(--accent2)}
+@keyframes popUp{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ===== FEEDBACK ===== */
+#practiceFeedback{margin-top:.8rem;font-weight:600;font-size:.95rem;padding:.5rem;border-radius:12px}
+#testResultArea{margin-top:1rem;font-weight:600;font-size:1rem;padding:.8rem;border-radius:12px}
+
+/* ===== FOOTER ===== */
+footer{text-align:center;padding:1.5rem;font-size:.8rem;color:var(--text3)}
+footer a{color:var(--accent);text-decoration:none}
+
+.main-app{display:none}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){
+  .container{padding:1rem}
+  .flag-title{font-size:2rem}
+  .flags-row{flex-direction:column;align-items:center}
+  .flag-card{max-width:240px;width:100%}
+  .tab-btn{padding:.5rem 1rem;font-size:.82rem}
+  .tab-btn span{display:none}
+  .section-title{font-size:1.3rem}
+  .grammar-card{padding:1rem 1.2rem}
+}
+    </style>
+</head>
+<body>
+
+<!-- ===== LANGUAGE SELECT SCREEN ===== -->
+<div id="flagScreen" class="flag-screen">
+    <div class="flag-content">
+        <div class="flag-title">Language Master</div>
+        <div class="flag-subtitle">Select your language · Kies je taal · Choisissez votre langue</div>
+        <div class="flags-row">
+            <div class="flag-card" data-lang="dutch">
+                <img src="https://flagcdn.com/w160/nl.png" alt="NL" loading="lazy">
+                <span>🇳🇱 Nederlands</span>
+            </div>
+            <div class="flag-card" data-lang="french">
+                <img src="https://flagcdn.com/w160/fr.png" alt="FR" loading="lazy">
+                <span>🇫🇷 Français</span>
+            </div>
+            <div class="flag-card" data-lang="english">
+                <img src="https://flagcdn.com/w160/gb.png" alt="EN" loading="lazy">
+                <span>🇬🇧 English</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="mainApp" class="main-app">
+    <div class="container">
+        <!-- SEARCH -->
+        <div class="search-section">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search grammar, exercises, tests..." autocomplete="off">
+                <button id="searchClearBtn" style="display:none"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="searchResultsPanel" class="search-results-panel"></div>
+        </div>
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="tab-nav" role="tablist">
+                <button class="tab-btn active" data-tab="grammar"><i class="fas fa-book-open"></i><span id="tabGrammarText">Grammar</span></button>
+                <button class="tab-btn" data-tab="practice"><i class="fas fa-puzzle-piece"></i><span id="tabPracticeText">Practice</span></button>
+                <button class="tab-btn" data-tab="tests"><i class="fas fa-clipboard-list"></i><span id="tabTestsText">Tests</span></button>
+            </div>
+            <div class="top-bar-actions">
+                <button class="lang-reset-btn" id="resetLanguageBtn" title="Change language"><i class="fas fa-globe"></i></button>
+                <button class="theme-toggle" id="darkModeToggle" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+            </div>
+        </div>
+
+        <!-- GRAMMAR SECTION -->
+        <div id="grammarSection" class="section-card active-section">
+            <div class="section-title"><i class="fas fa-book-open"></i> <span id="grammarTitle">Grammar</span></div>
+            <div class="grammar-scroll" id="grammarScroll">
+                <div id="grammarCardsContainer"></div>
+                <div class="swipe-hint"><i class="fas fa-arrow-up"></i> <span id="swipeHintSpan">scroll</span></div>
+            </div>
+        </div>
+
+        <!-- PRACTICE SECTION -->
+        <div id="practiceSection" class="section-card">
+            <div class="section-title"><i class="fas fa-puzzle-piece"></i> <span id="practiceTitle">Practice</span></div>
+            <div id="practiceLevelContainer" class="level-buttons"></div>
+            <div id="practiceQuizArea">
+                <div id="practiceQuestionText" class="quiz-question"></div>
+                <div id="practiceOptions" class="quiz-options"></div>
+                <button id="nextPracticeBtn" class="next-btn" style="display:none">Next →</button>
+                <div id="practiceFeedback"></div>
+            </div>
+            <div style="margin-top:14px">
+                <div class="progress-bar-container"><div class="progress-fill" id="practiceProgressFill"></div></div>
+                <div id="practiceProgressText" style="text-align:right;font-size:.8rem;color:var(--text3)"></div>
+            </div>
+        </div>
+
+        <!-- TESTS SECTION -->
+        <div id="testsSection" class="section-card">
+            <div class="section-title"><i class="fas fa-clipboard-list"></i> <span id="testTitle">Tests</span></div>
+            <div id="testLevelContainer" class="level-buttons"></div>
+            <div id="testQuestionsArea"></div>
+            <button id="submitTestBtn" class="submit-test">📊 Show results</button>
+            <div id="testResultArea"></div>
+        </div>
+    </div>
+    <footer>✨ Language Master · Learn with confidence ✨</footer>
+</div>
+
+<script>
+// ===== LANGUAGE DATA =====
+const LANG_DATA = {
+    dutch: {
+        code:'nl', dir:'ltr', nativeName:'Nederlands', theme:'#e85d04',
+        ui: {
+            grammarTitle:'Grammatica', practiceTitle:'Oefenen', testTitle:'Toetsen',
+            nextBtn:'Volgende →', submitBtn:'📊 Resultaat bekijken',
+            tabGrammar:'Grammatica', tabPractice:'Oefenen', tabTests:'Toetsen',
+            swipeHint:'scroll', testPlaceholder:'Typ hier...',
+            levelPrompt:'Selecteer een niveau (A1–B2)', noExercises:'Geen oefeningen beschikbaar', ok:'OK',
+            correct:'✓ Correct!', wrong:'✗ Fout! Juiste antwoord: ',
+            completed:'🏆 Niveau afgerond!',
+            congrats:(c,t,p)=>`🎉 Gefeliciteerd! ${c}/${t} (${p}%)`,
+            keepPracticing:(c,t,p)=>`📚 Score: ${c}/${t} (${p}%) — Blijf oefenen!`,
+            progress:(c,t)=>`Vraag ${c} van ${t}`,
+            searchPlaceholder:'Zoek in grammatica, oefeningen, toetsen... (bijv. OVT of A2)'
+        },
+        grammarTopics: [
+            {title:'📖 1. Alfabet & Uitspraak', explanation:'Het Nederlandse alfabet telt 26 letters, identiek aan het Engelse alfabet. De uitspraak verschilt aanzienlijk.\n\n• A: kort (kat), lang (maan)\n• E: drie klanken: ee (beet), e (bed), stomme e (de)\n• G: harde g /ɣ/ (schrapend)\n• U: uu /y:/ (lippen tuiten)\n• IJ/EI: klinkt als Engels "eye"\n• UI: moeilijke klank (huis, uit)\n• OU/AU: als Engels "ouch"\n• CH: zelfde als harde G\n• SCH: s + ch (school)\n• NG: neusklank (zingen)', words:['aa (maan)','ee (meen)','oo (boon)','uu (muur)','ie (mier)','oe (boek)','eu (neus)','ui (huis)','ij/ei','ou/au','ch (lach)','sch (school)'], keywords:['alfabet','uitspraak','klanken','diftongen']},
+            {title:'📝 2. Lidwoorden & Zelfstandige naamwoorden', explanation:'De / Het / Een\n\n• De-woorden (75%): de man, de vrouw, de tafel\n• Het-woorden (onzijdig): het boek, het kind, het huis\n• Een: altijd hetzelfde\n\nHet-woorden: verkleinwoorden, stofnamen, woorden op -isme, -um, -ment\nDe-woorden: personen, woorden op -ing, -heid, -nis, -tie', words:['de man','het boek','een vrouw','de tafel','het huis','de auto'], keywords:['lidwoorden','de','het','een','naamwoorden']},
+            {title:'👨‍👩‍👧‍👦 3. Meervoud', explanation:'Basisregels: -en of -s\n\n-en (meest voorkomend): boek→boeken, man→mannen\n-s (na stomme e, -el, -en, -er): tafel→tafels, auto→auto\'s\n-eren (uitzondering): kind→kinderen, ei→eieren\n\nLet op:\n• f→v: brief→brieven\n• s→z: huis→huizen', words:['boeken','tafels','cafés','kinderen','huizen','appels'], keywords:['meervoud','plural','-en','-s']},
+            {title:'🐣 4. Verkleinwoorden', explanation:'Altijd het-woord. Uitgang hangt af van eindklank:\n\n-je: huis→huisje\n-tje: been→beentje\n-pje: bloem→bloempje\n-etje: ring→ringetje\n-kje: koning→koninkje', words:['huisje','boompje','bloempje','ringetje','koninkje','boekje'], keywords:['verkleinwoord','diminutief','-je']},
+            {title:'🎨 5. Bijvoeglijke naamwoorden', explanation:'Verbuiging: meestal +e\nUitzondering: het-woord + een → geen -e\n• De grote man / Een grote man\n• Het mooie kind / Een mooi kind\n\nTrappen: mooi → mooier → mooist\nOnregelmatig: goed→beter→best, veel→meer→meest', words:['groot','groter','grootst','mooi','mooier','mooist'], keywords:['bijvoeglijk','adjectief','vergelijking']},
+            {title:'🙋 6. Persoonlijke voornaamwoorden', explanation:'Onderwerp → Object → Bezittelijk\nik → mij/me → mijn\njij/je → jou/je → jouw/je\nu → u → uw\nhij → hem → zijn\nzij/ze → haar → haar\nwij/we → ons → ons/onze\njullie → jullie → jullie\nzij/ze → hen/hun → hun\n\nHen = lijdend vw, Hun = meewerkend vw', words:['ik','mij','mijn','jij','jou','jouw','u','uw','hij','hem','zijn','zij','haar','wij','ons','jullie','hen','hun'], keywords:['voornaamwoord','pronomen','persoonlijk']},
+            {title:'👆 7. Aanwijzende, vragende & betrekkelijke vnw', explanation:'Aanwijzend:\n• De-woorden: deze (dichtbij) / die (ver)\n• Het-woorden: dit (dichtbij) / dat (ver)\n\nVragend: wie, wat, welk(e), wat voor\n\nBetrekkelijk:\n• Die → de-woorden: De man die daar loopt\n• Dat → het-woorden: Het boek dat ik lees', words:['deze','die','dit','dat','wie','wat','welk','welke'], keywords:['aanwijzend','vragend','betrekkelijk']},
+            {title:'❓ 8. Onbepaalde voornaamwoorden', explanation:'Personen: iemand, niemand, iedereen, men\nDingen: iets, niets, alles, wat\nHoeveelheid: elk, ieder(e), alle, sommige, veel, weinig, geen', words:['iemand','niemand','iets','niets','alles','men','elk','ieder','alle'], keywords:['onbepaald','iemand','niets']},
+            {title:'🤝 9. Wederkerende & wederkerige werkwoorden', explanation:'Wederkerend (zichzelf):\nIk was me, Jij vergist je, Hij scheert zich, Wij haasten ons\n\nWederkerig (met elkaar):\nWij zien elkaar, Zij helpen elkaar', words:['zich vergissen','zich wassen','elkaar zien','elkaar helpen','zich voelen'], keywords:['wederkerend','reflexief','elkaar']},
+            {title:'⏳ 10. Tegenwoordige tijd', explanation:'Regelmatig: stam = werkwoord min -en\nIk werk, Jij werkt, Hij werkt, Wij werken\nBij inversie met je: valt -t weg (Werk jij?)\n\nOnregelmatig:\nZijn: ben, bent, is, zijn\nHebben: heb, hebt, heeft, hebben\nKunnen: kan, kunt, kan, kunnen', words:['werk','werkt','werken','ben','bent','is','zijn','heb','hebt','heeft','hebben','zal','zult','zullen'], keywords:['tegenwoordige tijd','present','vervoeging']},
+            {title:'📜 11. Verleden tijd – zwak & sterk', explanation:'Zwak (\'t kofschip):\nStam eindigt op T,K,F,S,C,H,P → -te(n)\nAnders → -de(n)\nwerken→werkte, spelen→speelde\n\nSterk (klankverandering):\nlopen→liep, zingen→zong, gaan→ging', words:['werkte','speelde','liep','zong','dronk','at','ging','kwam'], keywords:['verleden tijd','ovt','kofschip','sterk','zwak']},
+            {title:'✅ 12. Voltooide tijd', explanation:'Hebben/Zijn + Voltooid Deelwoord\nge- + stam + -t (zwak) of -en (sterk)\n\nHebben: meeste werkwoorden\nZijn: verandering van toestand/locatie\n• Hij is naar huis gegaan\n• Ik heb gewerkt', words:['heb gewerkt','ben gegaan','heeft gegeten','zijn gekomen','heb gedaan'], keywords:['voltooide tijd','vtt','perfectum','ge-']},
+            {title:'🔙 13. Plusquamperfectum', explanation:'Had(den)/Was/Waren + Voltooid Deelwoord\nGebeurtenis vóór een ander verleden moment.\n\n• Ik had al gegeten, voordat jij thuiskwam.\n• Zij was net vertrokken, toen de telefoon ging.', words:['had gewerkt','was gegaan','hadden geslapen','waren vertrokken'], keywords:['plusquamperfectum','voltooid verleden']},
+            {title:'🔮 14. Toekomende tijd', explanation:'1. Zullen + infinitief (formeel/belofte)\n   Ik zal je morgen bellen.\n2. Gaan + infinitief (informeel/plan)\n   Ik ga vanavond koken.\n3. Tegenwoordige tijd + tijdsbepaling\n   Morgen vertrek ik naar Parijs.', words:['zal bellen','zult komen','ga werken','gaan slapen'], keywords:['toekomst','zullen','gaan','futurum']},
+            {title:'🤔 15. Conditionele & irrealis', explanation:'Zou(den) + Infinitief\n\nConditioneel: Als ik tijd heb, zou ik je kunnen helpen.\nIrrealis: Als ik rijk was, zou ik een vliegtuig kopen.\nBeleefd: Zou je het raam willen sluiten?', words:['zou helpen','zou kopen','als ... dan','zouden zijn'], keywords:['conditioneel','zou','als','irrealis']},
+            {title:'🎭 16. Lijdende vorm (passief)', explanation:'Worden + VD: proces → Het huis wordt gebouwd\nZijn + VD: resultaat → Het huis is gebouwd\n\nDader noemen met "door":\nDe brief wordt door de postbode bezorgd.', words:['wordt gebouwd','is gemaakt','werd gestolen','was geschreven'], keywords:['passief','lijdende vorm','worden']},
+            {title:'🔀 17. Scheidbare & onscheidbare werkwoorden', explanation:'Scheidbaar (voorzetsel + werkwoord):\nIk bel mijn moeder op. Wij gaan vanavond uit.\nIn bijzin: ...dat ik mijn moeder opbel.\n\nOnscheidbaar (be-, ver-, ont-, ge-, her-, er-):\nIk vertaal de tekst. VD: vertaald (geen ge-).', words:['opbellen','aankomen','meenemen','verstaan','herhalen','ontbijten'], keywords:['scheidbaar','onscheidbaar','voorvoegsel']},
+            {title:'🛠️ 18. Modale werkwoorden', explanation:'Kunnen (mogelijkheid), Mogen (toestemming), Moeten (verplichting)\nWillen (wens), Zullen (belofte/toekomst)\nHoeven (alleen met niet/maar): Je hoeft niet te komen.', words:['kunnen','mogen','moeten','willen','zullen','hoeven'], keywords:['modaal','kunnen','moeten','mogen']},
+            {title:'🔄 19. Vervangende infinitief', explanation:'Modaal werkwoord in voltooide tijd → infinitief i.p.v. voltooid deelwoord.\n\nCorrect: Ik heb het willen doen.\nFout: Ik heb het gewild doen.\n\nHij heeft moeten werken. Zij is blijven staan.', words:['hebben willen','hebben kunnen','hebben moeten','hebben mogen'], keywords:['vervangende infinitief','modaal perfectum']},
+            {title:'🚶 20. Continuïteitsvormen', explanation:'1. Zijn + aan het + infinitief:\n   Ik ben aan het lezen. Hij is aan het koken.\n\n2. Positiewerkwoorden + te + infinitief:\n   Hij zit te lezen. Zij staat te wachten.', words:['aan het lezen','zit te werken','staat te wachten','lig te slapen'], keywords:['continuïteit','aan het','progressief']},
+            {title:'🗣️ 21. Gebiedende wijs (imperatief)', explanation:'Enkelvoud: stam → Loop! Eet! Zeg!\nBeleefd (u): stam+t → Loopt u maar door.\nWij-vorm: Laten we + infinitief → Laten we gaan!', words:['loop','eet','kom','ga','laten we','wees'], keywords:['imperatief','gebiedende wijs','bevel']},
+            {title:'🚫 22. Ontkenningen', explanation:'Geen: ontkent onbepaald znw (Ik heb geen auto)\nNiet: ontkent al het andere (Ik slaap niet, Het is niet mooi)\n\nPlaats van niet: achter middenstuk, vóór eindgroep.', words:['geen','niet','nooit','niets','niemand'], keywords:['ontkenning','geen','niet','negatie']},
+            {title:'📏 23. Woordvolgorde', explanation:'Hoofdzin: O - PV - Rest - Andere ww\nInversie: Morgen koop ik een boek (PV op plek 2)\nVraagzin: PV - O - Rest (Koop jij een boek?)\nBijzin: werkwoorden naar einde (...dat ik een boek koop)', words:['ik koop','morgen koop ik','...dat ik koop','koop jij?'], keywords:['woordvolgorde','inversie','bijzin','hoofdzin']},
+            {title:'🔗 24. Voegwoorden', explanation:'Nevenschikkend (geen effect op volgorde):\nMEOWD: Maar, En, Of, Want, Dus\n\nOnderschikkend (werkwoorden naar einde):\nOmdat, Dat, Als, Toen, Hoewel, Terwijl, Zodat, Voordat', words:['en','maar','want','of','dus','omdat','dat','als','toen','hoewel'], keywords:['voegwoord','nevenschikkend','onderschikkend']},
+            {title:'🧩 25. Bijzinnen – alle soorten', explanation:'Tijd: Toen ik klein was...\nReden: Omdat het regent...\nDoel: Zodat je het begrijpt.\nVoorwaarde: Als jij gaat...\nToegeving: Hoewel ik moe ben...', words:['toen','wanneer','terwijl','omdat','doordat','opdat','als','indien','hoewel','ofschoon'], keywords:['bijzin','subordinatie']},
+            {title:'🎯 26. Om te + infinitief', explanation:'Geeft doel aan (antwoord op "Waarom?"):\nIk ga naar de winkel om brood te kopen.\nHij oefent elke dag om beter te worden.', words:['om te kopen','om te doen','om te zien','om te leren'], keywords:['om te','doel','infinitief']},
+            {title:'🛠️ 27. Andere infinitiefconstructies', explanation:'Zonder ... te: Hij vertrok zonder iets te zeggen.\nIn plaats van ... te: Werk in plaats van te klagen.\nAlvorens ... te: Was je handen alvorens te eten.\nDoor ... te: Door veel te oefenen, word je beter.', words:['zonder te zeggen','door te werken','na te denken','in plaats van te slapen'], keywords:['infinitief','zonder te','door te']},
+            {title:'📌 28. Te + infinitief na bn/zn', explanation:'Na bijvoeglijk naamwoord: Het is moeilijk te begrijpen.\nNa zelfstandig naamwoord: Ik heb zin om een ijsje te eten.\nHet is tijd om te gaan.', words:['moeilijk te begrijpen','leuk om te doen','zin om te gaan','tijd om te vertrekken'], keywords:['te + infinitief']},
+            {title:'🌟 29. Het woord "er"', explanation:'1. Locatief (plaats): Ik woon er.\n2. Presentatief: Er loopt een man.\n3. Kwantitatief: Ik heb er drie.\n4. Pronominaal bijwoord: eraan, ervan\n5. Passief zonder dader: Er wordt gefloten.', words:['er','eraan','ervan','er drie','er wordt'], keywords:['er','locatief','presentatief']},
+            {title:'↔️ 30. Pronominale bijwoorden', explanation:'Voorzetsel + het/dit/dat → er/hier/daar + voorzetsel\n\nOp + het → erop (Ik wacht erop)\nMet + dit → hiermee\nVoor + dat → daarvoor\nIn + wat? → waarin?', words:['erop','ervan','eraan','hierop','daarvoor','waarmee'], keywords:['pronominaal bijwoord','erop','ervan']},
+            {title:'🎭 31. Bijwoorden', explanation:'Tijd: nu, straks, gisteren, morgen, altijd, nooit\nPlaats: hier, daar, overal, nergens\nWijze: graag, snel, langzaam\nGraad: heel, erg, nogal, zeer\nModaliteit: misschien, waarschijnlijk, zeker', words:['nu','straks','gisteren','hier','daar','vaak','soms','graag','snel','heel','erg','misschien'], keywords:['bijwoord','adverb']},
+            {title:'📊 32. Trappen van vergelijking (bijwoorden)', explanation:'Regels identiek aan bijv. nw: -er en -st\nHij loopt snel. Zij loopt sneller. Ik loop het snelst.', words:['snel','sneller','snelst','vaak','vaker','vaakst'], keywords:['vergelijking','bijwoord','trappen']},
+            {title:'📍 33. Voorzetsels', explanation:'Vaste combinaties:\nHouden van, Wachten op, Denken aan\nLuisteren naar, Zorgen voor, Kijken naar\nPraten over, Twijfelen aan', words:['op','onder','naast','in','om','tijdens','houden van','wachten op','denken aan'], keywords:['voorzetsel','prepositie','vaste combinatie']},
+            {title:'🔢 34. Telwoorden', explanation:'Hoofdtelwoorden: een, twee, drie... tien, elf, twaalf\nLet op: eenentwintig (omgekeerd aan Engels!)\n\nRangtelwoorden: eerste, tweede, derde, vierde\n\nBreuken: een half, een derde, een kwart', words:['een','twee','drie','eerste','tweede','derde','een half','een derde','twee vijfde'], keywords:['telwoord','getal','rangtelwoord']},
+            {title:'📅 35. Datum & tijd', explanation:'Klokkijken:\nHeel uur: drie uur\nKwartier: kwart over drie, kwart voor vier\nHalf: half vier (= 3:30!)\nMinuten: tien over half vier (3:40)\n\nDatum: de veertiende april', words:['maandag','dinsdag','woensdag','januari','februari','maart','half drie','kwart over'], keywords:['tijd','datum','klok','dagen','maanden']},
+            {title:'🧐 36. Zinsontleding', explanation:'Onderwerp (O): Wie/Wat + PV?\nGezegde (G): alle werkwoorden\nLijdend Voorwerp (LV): Wat/Wie + G + O?\nMeewerkend Voorwerp (MV): Aan/Voor wie?\nBijwoordelijke Bepaling (BWB): Waar? Wanneer? Hoe?', words:['onderwerp','gezegde','lijdend voorwerp','meewerkend voorwerp','bijwoordelijke bepaling'], keywords:['zinsontleding','zinsdelen']},
+            {title:'🧩 37. Redekundig ontleden', explanation:'Bijvoeglijke Bepaling: De grote bakker.\nBijstelling: Jan, mijn buurman, is jarig.', words:['bijvoeglijke bepaling','bijstelling','voorzetselvoorwerp'], keywords:['redekundig','ontleden']},
+            {title:'🏷️ 38. Taalkundig ontleden – woordsoorten', explanation:'10 categorieën:\n1. Lidwoord 2. Zelfstandig naamwoord 3. Bijvoeglijk naamwoord\n4. Werkwoord 5. Voornaamwoord 6. Telwoord\n7. Voorzetsel 8. Bijwoord 9. Voegwoord\n10. Tussenwerpsel (Hé! Au!)', words:['lidwoord','zelfstandig naamwoord','bijvoeglijk naamwoord','werkwoord','voornaamwoord','telwoord','voorzetsel','bijwoord','voegwoord','tussenwerpsel'], keywords:['woordsoorten','taalkundig']},
+            {title:'✍️ 39. Interpunctie', explanation:'Komma: opsommingen, voor maar/want (lang), voor onderschikkend voegwoord\nNiet voor en/of bij korte zinnen\nPuntkomma: twee sterk samenhangende zinnen\nAanhalingstekens: Hij zei: "Ik ga naar huis."', words:['punt','komma','vraagteken','uitroepteken','aanhalingstekens'], keywords:['interpunctie','leestekens','komma']},
+            {title:'⚠️ 40. Veelgemaakte fouten', explanation:'1. Hen vs. Hun: hun=MV, hen=LV/na voorzetsel\n2. Als vs. Dan: dan na vergrotende trap, als na stellende trap\n3. \'t Kofschip: altijd gebruiken voor verleden tijd\n4. Het/de: leer woorden mét lidwoord\n5. Hun als onderwerp: FOUT! → Zij hebben dat gedaan.', words:['hen','hun','als','dan','kofschip','de','het','word','wordt'], keywords:['fouten','valkuilen','hen','hun','als','dan']}
+        ],
+        exercises: {
+            A1: [
+                {question:"Hoe zeg je 'good morning'?", options:['Goedenacht','Goedemiddag','Goedemorgen','Dag'], correct:'Goedemorgen'},
+                {question:"Wat is het lidwoord van 'boek'?", options:['de','het','een','die'], correct:'het'},
+                {question:"Hoe zeg je 'thank you'?", options:['Alsjeblieft','Dank je wel','Goedenavond','Sorry'], correct:'Dank je wel'},
+                {question:"Welk woord is een kleur?", options:['Tafel','Rood','Lopen','Eten'], correct:'Rood'}
+            ],
+            A2: [
+                {question:'Ik ____ naar school.', options:['ga','gaan','gaat','ging'], correct:'ga'},
+                {question:'Hij ____ een boek.', options:['lees','leest','lezen','las'], correct:'leest'},
+                {question:'Wij ____ Nederlands.', options:['spreekt','spreken','spreek','sprak'], correct:'spreken'},
+                {question:'Jij ____ in Amsterdam.', options:['wonen','woont','woon','woonde'], correct:'woont'}
+            ],
+            B1: [
+                {question:'Als ik rijk was, ____ ik een groot huis.', options:['koop','kocht','zou kopen','kopen'], correct:'zou kopen'},
+                {question:'Hij heeft de hele dag moeten ____.', options:['werkt','gewerkt','werken','werkend'], correct:'werken'},
+                {question:'Het huis ____ vorig jaar gebouwd.', options:['wordt','werd','is','was'], correct:'werd'}
+            ],
+            B2: [
+                {question:'Nadat hij ____ had, ging hij slapen.', options:['eet','gegeten','at','aten'], correct:'gegeten'},
+                {question:'Zij zou het ____ hebben als ze het had geweten.', options:['anders gedaan','gedaan anders','anders doen','doen anders'], correct:'anders gedaan'}
+            ]
+        },
+        tests: {
+            A1: [
+                {type:'mc', text:'Wat is "brood" in het Engels?', options:['Bread','Butter','Cheese'], correct:'Bread'},
+                {type:'mc', text:'Welk lidwoord hoort bij "huis"?', options:['de','het','een'], correct:'het'},
+                {type:'fill', text:'Vul in: Goedem____gen (good morning)', correct:'goedemorgen'}
+            ],
+            A2: [
+                {type:'fill', text:'Vul in: Hij ____ (werken) op kantoor.', correct:'werkt'},
+                {type:'mc', text:'Wat is het meervoud van "kind"?', options:['kinds','kinderen','kinden'], correct:'kinderen'},
+                {type:'fill', text:'Vul in: Wij ____ (hebben) een kat.', correct:'hebben'}
+            ],
+            B1: [
+                {type:'fill', text:'Zij ____ (hebben) een nieuwe auto gekocht.', correct:'heeft'},
+                {type:'mc', text:'Welke zin is correct?', options:['Ik heb moeten werken','Ik heb gemoeten werken','Ik moet gewerkt hebben'], correct:'Ik heb moeten werken'},
+                {type:'fill', text:'Als ik jou was, ____ ik dat niet doen. (zullen)', correct:'zou'}
+            ],
+            B2: [
+                {type:'fill', text:'Het boek ____ (worden) vorig jaar gepubliceerd.', correct:'werd'},
+                {type:'fill', text:'Nadat hij ____ (eten) had, ging hij weg.', correct:'gegeten'}
+            ]
+        }
+    },
+    french: {
+        code:'fr', dir:'ltr', nativeName:'Français', theme:'#0055A4',
+        ui: {
+            grammarTitle:'Grammaire', practiceTitle:'Entraînement', testTitle:'Évaluations',
+            nextBtn:'Suivant →', submitBtn:'📊 Voir les résultats',
+            tabGrammar:'Grammaire', tabPractice:'Entraînement', tabTests:'Évaluations',
+            swipeHint:'défiler', testPlaceholder:'Écrivez...',
+            levelPrompt:'Choisissez un niveau', noExercises:"Pas d'exercices disponibles", ok:'OK',
+            correct:'✓ Correct !', wrong:'✗ Faux ! Réponse : ',
+            completed:'🏆 Niveau terminé !',
+            congrats:(c,t,p)=>`🎉 Félicitations ! ${c}/${t} (${p}%)`,
+            keepPracticing:(c,t,p)=>`📚 Score: ${c}/${t} (${p}%) — Continuez !`,
+            progress:(c,t)=>`Question ${c} sur ${t}`,
+            searchPlaceholder:'Rechercher (ex: passé composé ou A2)'
+        },
+        grammarTopics: [
+            {title:'Présent de l\'indicatif', explanation:'Verbes du 1er groupe (-er): je parle, tu parles, il parle, nous parlons, vous parlez, ils parlent\nVerbes du 2e groupe (-ir): je finis, tu finis, il finit, nous finissons\nVerbes du 3e groupe: irréguliers (faire, aller, être, avoir)', words:['parler','manger','finir','aller','être','avoir','faire'], keywords:['présent','indicatif']},
+            {title:'Passé composé', explanation:'Avoir/Être + participe passé\nJ\'ai parlé, je suis allé(e)\nÊtre: verbes de mouvement + réfléchis\nAccord avec être: Elle est allée', words:['parlé','allé','fini','fait','été','eu'], keywords:['passé composé','p.c.','participe']},
+            {title:'Négation', explanation:'Ne ... pas (Niet)\nNe ... jamais (Nooit)\nNe ... rien (Niets)\nNe ... personne (Niemand)\nNe ... plus (Niet meer)', words:['ne pas','ne jamais','ne rien','ne personne','ne plus'], keywords:['négation','ne pas']},
+            {title:'Articles définis et indéfinis', explanation:'Définis: le, la, l\', les\nIndéfinis: un, une, des\nPartitifs: du, de la, de l\'\n\nAprès négation: de/d\'', words:['le','la','les','un','une','des','du','de la'], keywords:['articles','défini','indéfini']},
+            {title:'Imparfait', explanation:'Racine du nous au présent + terminaisons:\n-ais, -ais, -ait, -ions, -iez, -aient\nException: être → j\'étais\n\nUsage: habitude, description, action en cours dans le passé', words:['parlais','finissais','étais','avais','faisais'], keywords:['imparfait']},
+            {title:'Futur simple', explanation:'Infinitif + terminaisons:\n-ai, -as, -a, -ons, -ez, -ont\nIrréguliers: serai, aurai, ferai, irai, pourrai', words:['parlerai','finirai','serai','aurai','irai','ferai'], keywords:['futur','futur simple']}
+        ],
+        exercises: {
+            A1:[
+                {question:"Comment dit-on 'good morning' ?", options:['Bonsoir','Bonjour','Bonne nuit','Salut'], correct:'Bonjour'},
+                {question:'Je ____ français.', options:['parle','parles','parlons','parlez'], correct:'parle'}
+            ],
+            A2:[
+                {question:'Hier, il ____ beau.', options:['fait','faisait','fera','ferait'], correct:'faisait'},
+                {question:'Elle ____ allée au cinéma.', options:['a','est','avait','était'], correct:'est'}
+            ],
+            B1:[
+                {question:'Si j\'avais de l\'argent, j\'____ une maison.', options:['achète','achèterais','ai acheté','achèterai'], correct:'achèterais'}
+            ],
+            B2:[]
+        },
+        tests: {
+            A1:[{type:'mc', text:'Quel est l\'article défini féminin?', options:['le','la','les'], correct:'la'}],
+            A2:[{type:'fill', text:'Complétez: Nous ____ (avoir) un chat.', correct:'avons'}],
+            B1:[{type:'fill', text:'Si j\'étais riche, j\'____ (acheter) un château.', correct:'achèterais'}],
+            B2:[]
+        }
+    },
+    english: {
+        code:'en', dir:'ltr', nativeName:'English', theme:'#CC0000',
+        ui: {
+            grammarTitle:'Grammar', practiceTitle:'Practice', testTitle:'Tests',
+            nextBtn:'Next →', submitBtn:'📊 Show results',
+            tabGrammar:'Grammar', tabPractice:'Practice', tabTests:'Tests',
+            swipeHint:'scroll', testPlaceholder:'Type...',
+            levelPrompt:'Select a level', noExercises:'No exercises available', ok:'OK',
+            correct:'✓ Correct!', wrong:'✗ Wrong! Answer: ',
+            completed:'🏆 Level completed!',
+            congrats:(c,t,p)=>`🎉 Congratulations! ${c}/${t} (${p}%)`,
+            keepPracticing:(c,t,p)=>`📚 Score: ${c}/${t} (${p}%) — Keep practicing!`,
+            progress:(c,t)=>`Question ${c} of ${t}`,
+            searchPlaceholder:'Search grammar, exercises, tests... (e.g., Present Perfect or A2)'
+        },
+        grammarTopics: [
+            {title:'Simple Present', explanation:'I work, you work, he/she works\nAdd -s for 3rd person singular\n\nNegative: do not / does not + base form\nQuestion: Do/Does + subject + base form?\n\nUsed for: habits, facts, schedules', words:['work','study','play','go','does','do'], keywords:['present simple','simple present']},
+            {title:'Present Perfect', explanation:'Have/Has + past participle\nI have seen, She has gone\n\nUsed for: experience, change, continuing situation\nKey words: already, yet, ever, never, since, for', words:['seen','gone','done','been','had','taken'], keywords:['present perfect','have']},
+            {title:'Modal Verbs', explanation:'Can (ability/permission)\nMust (obligation/certainty)\nShould (advice)\nWould (conditional/polite)\nMight/May (possibility)\nCould (past ability/polite request)', words:['can','must','should','would','might','could'], keywords:['modal','auxiliary']},
+            {title:'Past Simple', explanation:'Regular: verb + -ed (worked, played)\nIrregular: go→went, see→saw, eat→ate\n\nNegative: did not + base form\nQuestion: Did + subject + base form?', words:['worked','played','went','saw','ate','did'], keywords:['past simple','past tense']},
+            {title:'Conditionals', explanation:'Zero: If + present, present (facts)\nFirst: If + present, will + base (likely future)\nSecond: If + past, would + base (unreal present)\nThird: If + past perfect, would have + pp (unreal past)', words:['if','would','will','could','might','had'], keywords:['conditional','if clause']},
+            {title:'Passive Voice', explanation:'Be + past participle\nPresent: The book is read.\nPast: The book was read.\nPerfect: The book has been read.\n\nBy + agent (optional): The book was written by her.', words:['is done','was made','has been seen','will be built','being done'], keywords:['passive','voice']}
+        ],
+        exercises: {
+            A1:[
+                {question:"What is the correct greeting for the morning?", options:['Good night','Good afternoon','Good morning','Goodbye'], correct:'Good morning'},
+                {question:'She ____ to school every day.', options:['go','goes','going','gone'], correct:'goes'}
+            ],
+            A2:[
+                {question:'I ____ my homework yesterday.', options:['do','did','done','does'], correct:'did'},
+                {question:'They have ____ to Paris.', options:['go','went','gone','going'], correct:'gone'}
+            ],
+            B1:[
+                {question:'If I ____ rich, I would travel the world.', options:['am','was','were','be'], correct:'were'},
+                {question:'The cake ____ by my mother.', options:['baked','was baked','is bake','has bake'], correct:'was baked'}
+            ],
+            B2:[
+                {question:'Had I known, I ____ differently.', options:['would act','would have acted','acted','had acted'], correct:'would have acted'}
+            ]
+        },
+        tests: {
+            A1:[
+                {type:'mc', text:'Which is a fruit?', options:['Chair','Apple','Book'], correct:'Apple'},
+                {type:'fill', text:'She ____ (go) to work every day.', correct:'goes'}
+            ],
+            A2:[
+                {type:'fill', text:'I ____ (eat) pizza yesterday.', correct:'ate'},
+                {type:'mc', text:'Which is the past of "see"?', options:['seed','seen','saw'], correct:'saw'}
+            ],
+            B1:[
+                {type:'fill', text:'If I were you, I ____ (not do) that.', correct:"wouldn't do"},
+                {type:'mc', text:'Which sentence is passive?', options:['She wrote a letter','A letter was written','She is writing'], correct:'A letter was written'}
+            ],
+            B2:[]
+        }
+    }
+};
+
+// ===== STATE =====
+let currentLang = 'dutch';
+let currentPracticeLevel = 'A1';
+let practiceQuestions = [], practiceIndex = 0, practiceAnswered = false, practiceScore = {correct:0,total:0};
+let currentTestQuestions = [], userTestAnswers = [], currentTestLevel = 'A1';
+let currentTab = 'grammar';
+
+// ===== DOM =====
+const $ = id => document.getElementById(id);
+const flagScreen = $('flagScreen');
+const mainApp = $('mainApp');
+const grammarContainer = $('grammarCardsContainer');
+const practiceLevelDiv = $('practiceLevelContainer');
+const testLevelDiv = $('testLevelContainer');
+const practiceQuestionText = $('practiceQuestionText');
+const practiceOptionsDiv = $('practiceOptions');
+const nextPracticeBtn = $('nextPracticeBtn');
+const practiceFeedback = $('practiceFeedback');
+const testQuestionsArea = $('testQuestionsArea');
+const submitTestBtn = $('submitTestBtn');
+const testResultArea = $('testResultArea');
+const grammarScroll = $('grammarScroll');
+const practiceProgressFill = $('practiceProgressFill');
+const practiceProgressText = $('practiceProgressText');
+const searchInput = $('searchInput');
+const searchClearBtn = $('searchClearBtn');
+const searchResultsPanel = $('searchResultsPanel');
+
+// ===== DARK MODE =====
+if(localStorage.getItem('darkMode')==='true') document.body.classList.add('dark');
+$('darkModeToggle').addEventListener('click', ()=>{
+    document.body.classList.toggle('dark');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+    $('darkModeToggle').querySelector('i').className = document.body.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon';
+});
+if(document.body.classList.contains('dark')) $('darkModeToggle').querySelector('i').className = 'fas fa-sun';
+
+// ===== LANGUAGE SELECT =====
+document.querySelectorAll('.flag-card').forEach(card => {
+    card.addEventListener('click', () => {
+        currentLang = card.dataset.lang;
+        flagScreen.style.display = 'none';
+        mainApp.style.display = 'block';
+        initApp();
+    });
+});
+$('resetLanguageBtn').addEventListener('click', () => {
+    mainApp.style.display = 'none';
+    flagScreen.style.display = 'flex';
+});
+
+// ===== TABS =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTab = btn.dataset.tab;
+        document.querySelectorAll('.section-card').forEach(s => s.classList.remove('active-section'));
+        $({grammar:'grammarSection',practice:'practiceSection',tests:'testsSection'}[currentTab]).classList.add('active-section');
+    });
+});
+
+// ===== HELPERS =====
+function speakWord(word, lang) {
+    if(!window.speechSynthesis) return;
+    const u = new SpeechSynthesisUtterance(word);
+    u.lang = {dutch:'nl-NL',french:'fr-FR',english:'en-US'}[lang]||'en-US';
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+function showPopup(word) {
+    document.querySelectorAll('.dict-popup').forEach(p=>p.remove());
+    const popup = document.createElement('div');
+    popup.className = 'dict-popup';
+    popup.innerHTML = `<i class="fas fa-volume-up"></i> ${word}`;
+    document.body.appendChild(popup);
+    popup.querySelector('i').addEventListener('click', e => { e.stopPropagation(); speakWord(word, currentLang); });
+    setTimeout(() => popup.remove(), 2800);
+}
+
+function updateUITitles(lang) {
+    const ui = LANG_DATA[lang].ui;
+    $('grammarTitle').textContent = ui.grammarTitle;
+    $('practiceTitle').textContent = ui.practiceTitle;
+    $('testTitle').textContent = ui.testTitle;
+    $('tabGrammarText').textContent = ui.tabGrammar;
+    $('tabPracticeText').textContent = ui.tabPractice;
+    $('tabTestsText').textContent = ui.tabTests;
+    $('swipeHintSpan').textContent = ui.swipeHint;
+    nextPracticeBtn.textContent = ui.nextBtn;
+    submitTestBtn.textContent = ui.submitBtn;
+    searchInput.placeholder = ui.searchPlaceholder || 'Search...';
+}
+
+// ===== INIT =====
+function initApp() {
+    updateUITitles(currentLang);
+    renderGrammar();
+    buildPracticeLevels();
+    resetPracticeProgress();
+    loadPractice();
+    buildTestLevels();
+    loadTests(currentTestLevel);
+    // Reset to grammar tab
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-tab="grammar"]').classList.add('active');
+    document.querySelectorAll('.section-card').forEach(s => s.classList.remove('active-section'));
+    $('grammarSection').classList.add('active-section');
+    currentTab = 'grammar';
+}
+
+// ===== GRAMMAR =====
+function renderGrammar() {
+    const topics = LANG_DATA[currentLang].grammarTopics;
+    grammarContainer.innerHTML = topics.map(t => `
+        <div class="grammar-card" data-grammar-title="${t.title.toLowerCase()}">
+            <h3><i class="fas fa-bookmark"></i> ${t.title}</h3>
+            <p>${t.explanation}</p>
+            <div class="example-words">${t.words.map(w =>
+                `<span class="dict-word" data-word="${w}"><i class="fas fa-volume-up"></i> ${w}</span>`
+            ).join('')}</div>
+        </div>
+    `).join('');
+    grammarContainer.querySelectorAll('.dict-word').forEach(el => {
+        el.addEventListener('click', e => {
+            e.stopPropagation();
+            showPopup(el.dataset.word);
+            speakWord(el.dataset.word, currentLang);
+        });
+    });
+}
+
+// ===== PRACTICE =====
+function buildPracticeLevels() {
+    practiceLevelDiv.innerHTML = ['A1','A2','B1','B2'].map(l =>
+        `<button class="level-btn${l===currentPracticeLevel?' active-level':''}" data-level="${l}">${l}</button>`
+    ).join('');
+    practiceLevelDiv.querySelectorAll('.level-btn').forEach(b => b.addEventListener('click', () => {
+        currentPracticeLevel = b.dataset.level;
+        buildPracticeLevels();
+        resetPracticeProgress();
+        loadPractice();
+    }));
+}
+
+function resetPracticeProgress() { practiceScore = {correct:0,total:0}; updatePracticeProgressBar(); }
+
+function updatePracticeProgressBar() {
+    if(!practiceQuestions.length) { practiceProgressFill.style.width='0%'; practiceProgressText.textContent=''; return; }
+    const answered = practiceIndex + (practiceAnswered?1:0);
+    const pct = (answered/practiceQuestions.length)*100;
+    practiceProgressFill.style.width = pct+'%';
+    practiceProgressText.textContent = LANG_DATA[currentLang].ui.progress(answered, practiceQuestions.length);
+}
+
+function loadPractice() {
+    const ui = LANG_DATA[currentLang].ui;
+    const ex = LANG_DATA[currentLang].exercises[currentPracticeLevel] || [];
+    practiceQuestions = ex.length ? ex : [{question:ui.noExercises, options:[ui.ok], correct:ui.ok}];
+    practiceIndex = 0; practiceAnswered = false;
+    renderPracticeQuestion();
+}
+
+function renderPracticeQuestion() {
+    const ui = LANG_DATA[currentLang].ui;
+    const q = practiceQuestions[practiceIndex];
+    practiceQuestionText.textContent = q.question;
+    practiceOptionsDiv.innerHTML = q.options.map(opt =>
+        `<div class="quiz-option" data-opt="${opt}">${opt}</div>`
+    ).join('');
+    practiceAnswered = false;
+    nextPracticeBtn.style.display = 'none';
+    practiceFeedback.innerHTML = '';
+    updatePracticeProgressBar();
+    practiceOptionsDiv.querySelectorAll('.quiz-option').forEach(el => {
+        el.addEventListener('click', function() {
+            if(practiceAnswered) return;
+            const selected = this.dataset.opt;
+            const isCorrect = selected === q.correct;
+            this.classList.add(isCorrect ? 'correct-feedback' : 'wrong-feedback');
+            if(!isCorrect) {
+                practiceOptionsDiv.querySelectorAll('.quiz-option').forEach(o => {
+                    if(o.dataset.opt === q.correct) o.classList.add('correct-feedback');
+                });
+            }
+            practiceFeedback.innerHTML = isCorrect
+                ? `<span style="color:var(--green)">${ui.correct}</span>`
+                : `<span style="color:var(--red)">${ui.wrong}${q.correct}</span>`;
+            if(isCorrect) practiceScore.correct++;
+            practiceScore.total++;
+            practiceAnswered = true;
+            nextPracticeBtn.style.display = 'block';
+            updatePracticeProgressBar();
+        });
+    });
+}
+
+nextPracticeBtn.addEventListener('click', () => {
+    if(practiceIndex + 1 < practiceQuestions.length) {
+        practiceIndex++;
+        renderPracticeQuestion();
+    } else {
+        const ui = LANG_DATA[currentLang].ui;
+        const pct = Math.round((practiceScore.correct/practiceScore.total)*100);
+        practiceFeedback.innerHTML = pct >= 70
+            ? `<span style="color:var(--green)">${ui.congrats(practiceScore.correct,practiceScore.total,pct)}</span>`
+            : `<span style="color:var(--accent)">${ui.keepPracticing(practiceScore.correct,practiceScore.total,pct)}</span>`;
+        nextPracticeBtn.style.display = 'none';
+        practiceProgressFill.style.width = '100%';
+    }
+});
+
+// ===== TESTS =====
+function buildTestLevels() {
+    testLevelDiv.innerHTML = ['A1','A2','B1','B2'].map(l =>
+        `<button class="level-btn${l===currentTestLevel?' active-level':''}" data-tlevel="${l}">${l}</button>`
+    ).join('');
+    testLevelDiv.querySelectorAll('.level-btn').forEach(b => b.addEventListener('click', () => {
+        currentTestLevel = b.dataset.tlevel;
+        buildTestLevels();
+        loadTests(currentTestLevel);
+    }));
+}
+
+function loadTests(level) {
+    currentTestQuestions = LANG_DATA[currentLang].tests[level] || [];
+    userTestAnswers = Array(currentTestQuestions.length).fill('');
+    testResultArea.innerHTML = '';
+    renderTests();
+}
+
+function renderTests() {
+    const ui = LANG_DATA[currentLang].ui;
+    if(!currentTestQuestions.length) {
+        testQuestionsArea.innerHTML = `<p class="no-results">${ui.levelPrompt}</p>`;
+        return;
+    }
+    testQuestionsArea.innerHTML = currentTestQuestions.map((q,i) => `
+        <div class="test-question-item">
+            <p>${i+1}. ${q.text}</p>
+            ${q.type === 'mc'
+                ? `<div class="test-radio-group">${q.options.map(opt =>
+                    `<label><input type="radio" name="tq${i}" value="${opt}"> ${opt}</label>`
+                ).join('')}</div>`
+                : `<input type="text" class="test-input" data-qidx="${i}" placeholder="${ui.testPlaceholder}">`
+            }
+        </div>
+    `).join('');
+    // Attach listeners
+    testQuestionsArea.querySelectorAll('.test-input').forEach(inp => {
+        inp.addEventListener('input', e => userTestAnswers[+inp.dataset.qidx] = e.target.value.trim());
+    });
+    currentTestQuestions.forEach((q,i) => {
+        if(q.type === 'mc') {
+            testQuestionsArea.querySelectorAll(`input[name="tq${i}"]`).forEach(r =>
+                r.addEventListener('change', e => userTestAnswers[i] = e.target.value)
+            );
+        }
+    });
+}
+
+submitTestBtn.addEventListener('click', () => {
+    const ui = LANG_DATA[currentLang].ui;
+    if(!currentTestQuestions.length) { testResultArea.innerHTML = `<p>${ui.levelPrompt}</p>`; return; }
+    let correct = 0;
+    currentTestQuestions.forEach((q,i) => {
+        const ans = (userTestAnswers[i]||'').trim().toLowerCase();
+        if(ans === q.correct.toLowerCase()) correct++;
+    });
+    const pct = Math.round((correct/currentTestQuestions.length)*100);
+    testResultArea.innerHTML = pct >= 70
+        ? `<span style="color:var(--green)">${ui.congrats(correct,currentTestQuestions.length,pct)}</span>`
+        : `<span style="color:var(--accent)">${ui.keepPracticing(correct,currentTestQuestions.length,pct)}</span>`;
+});
+
+// ===== SEARCH =====
+function buildSearchIndex() {
+    const idx = [];
+    const data = LANG_DATA[currentLang];
+    const ui = data.ui;
+    data.grammarTopics.forEach((topic, i) => {
+        const txt = (topic.title+' '+topic.explanation+' '+(topic.keywords||[]).join(' ')+' '+topic.words.join(' ')).toLowerCase();
+        idx.push({type:'grammar',title:topic.title,sub:ui.grammarTitle,index:i,searchText:txt,icon:'book-open'});
+    });
+    ['A1','A2','B1','B2'].forEach(level => {
+        (data.exercises[level]||[]).forEach((ex,i) => {
+            const txt = (ex.question+' '+ex.options.join(' ')+' '+level).toLowerCase();
+            idx.push({type:'exercise',level,title:ex.question,sub:`${ui.practiceTitle} ${level}`,index:i,searchText:txt,icon:'puzzle-piece'});
+        });
+        (data.tests[level]||[]).forEach((t,i) => {
+            const txt = (t.text+' '+(t.options||[]).join(' ')+' '+level).toLowerCase();
+            idx.push({type:'test',level,title:t.text,sub:`${ui.testTitle} ${level}`,index:i,searchText:txt,icon:'clipboard-list'});
+        });
+    });
+    return idx;
+}
+
+function highlightText(text, query) {
+    if(!query) return text;
+    const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+    return text.replace(re, '<span class="highlight">$1</span>');
+}
+
+function performSearch(query) {
+    if(!query.trim()) { searchResultsPanel.style.display='none'; return; }
+    const q = query.trim().toLowerCase();
+    let index = buildSearchIndex();
+    const levelMatch = q.match(/^(a1|a2|b1|b2)$/i);
+    if(levelMatch) {
+        const lvl = levelMatch[0].toUpperCase();
+        index = index.filter(it => (it.type==='exercise'||it.type==='test') && it.level===lvl);
+    } else {
+        index = index.filter(it => it.searchText.includes(q));
+    }
+    if(!index.length) {
+        searchResultsPanel.innerHTML = '<div class="no-results">No results found</div>';
+        searchResultsPanel.style.display='block';
+        return;
+    }
+    const grouped = {grammar:[],exercise:[],test:[]};
+    index.forEach(it => grouped[it.type].push(it));
+    let html = '';
+    const labels = {grammar:'📖 Grammar',exercise:'🧩 Practice',test:'📋 Tests'};
+    for(const [type, items] of Object.entries(grouped)) {
+        if(!items.length) continue;
+        html += `<div class="search-result-category">${labels[type]}</div>`;
+        items.forEach(it => {
+            html += `<div class="search-result-item" data-type="${it.type}" data-index="${it.index}" data-level="${it.level||''}">
+                <div class="search-result-icon"><i class="fas fa-${it.icon}"></i></div>
+                <div><div class="search-result-title">${highlightText(it.title,query.trim())}</div>
+                <div class="search-result-sub">${it.sub}</div></div>
+            </div>`;
+        });
+    }
+    searchResultsPanel.innerHTML = html;
+    searchResultsPanel.style.display = 'block';
+    searchResultsPanel.querySelectorAll('.search-result-item').forEach(el => {
+        el.addEventListener('click', () => {
+            const type = el.dataset.type;
+            const idx = +el.dataset.index;
+            const level = el.dataset.level;
+            searchResultsPanel.style.display = 'none';
+            searchInput.value = '';
+            searchClearBtn.style.display = 'none';
+            if(type === 'grammar') {
+                // Switch to grammar tab
+                document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+                document.querySelector('[data-tab="grammar"]').classList.add('active');
+                document.querySelectorAll('.section-card').forEach(s=>s.classList.remove('active-section'));
+                $('grammarSection').classList.add('active-section');
+                // Scroll to card
+                const cards = grammarContainer.querySelectorAll('.grammar-card');
+                if(cards[idx]) {
+                    cards[idx].scrollIntoView({behavior:'smooth',block:'center'});
+                    cards[idx].classList.add('highlight-card');
+                    setTimeout(()=>cards[idx].classList.remove('highlight-card'),2500);
+                }
+            } else if(type === 'exercise') {
+                document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+                document.querySelector('[data-tab="practice"]').classList.add('active');
+                document.querySelectorAll('.section-card').forEach(s=>s.classList.remove('active-section'));
+                $('practiceSection').classList.add('active-section');
+                currentPracticeLevel = level;
+                buildPracticeLevels();
+                resetPracticeProgress();
+                loadPractice();
+            } else if(type === 'test') {
+                document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+                document.querySelector('[data-tab="tests"]').classList.add('active');
+                document.querySelectorAll('.section-card').forEach(s=>s.classList.remove('active-section'));
+                $('testsSection').classList.add('active-section');
+                currentTestLevel = level;
+                buildTestLevels();
+                loadTests(level);
+            }
+        });
+    });
+}
+
+searchInput.addEventListener('input', () => {
+    const val = searchInput.value;
+    searchClearBtn.style.display = val ? 'block' : 'none';
+    performSearch(val);
+});
+searchClearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    searchClearBtn.style.display = 'none';
+    searchResultsPanel.style.display = 'none';
+});
+document.addEventListener('click', e => {
+    if(!e.target.closest('.search-section')) searchResultsPanel.style.display = 'none';
+});
+</script>
+</body>
+</html>
